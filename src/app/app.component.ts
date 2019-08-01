@@ -27,6 +27,9 @@ export class AppComponent {
 
     // observable-webworker
     const input$ = of('Hello from main thread');
-    this.obs$ = fromWorker<string, string>(() => new Worker('./observable.worker', { type: 'module' }), input$);
+    this.obs$ = fromWorker<string, string>(() => new Worker('./observable.worker', {
+      name: 'observable-worker',
+      type: 'module'
+    }), input$);
   }
 }
