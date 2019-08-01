@@ -1,27 +1,38 @@
-# ObservableWebworkerProblem
+This repository tries to prove that `observable-webworker` gets too mangled to work in Angular production builds.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.0.
+# Usage
 
-## Development server
+## Development mode ✅
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+`npm start` (or `ng serve`) renders this on [http://localhost:4200/webpack-dev-server/](http://localhost:4200/webpack-dev-server/):
 
-## Code scaffolding
+```
+Non-observable worker: Hello from non-observable worker
+Observable worker: Hello from observable webworker
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Build ✅
 
-## Build
+`npm build` (or `ng build`) renders this when the `dist/observable-webworker-problem` directory is served on a web server:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```
+Non-observable worker: Hello from non-observable worker
+Observable worker: Hello from observable webworker
+```
 
-## Running unit tests
+## Production build ❌
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+`npm build:prod` (or `ng build --prod`) renders this when the `dist/observable-webworker-problem` directory is served on a web server:
 
-## Running end-to-end tests
+```
+Non-observable worker: Hello from non-observable worker
+Observable worker:
+```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+# Why it disappears
 
-## Further help
+When comparing the artefacts created by the two different builds, it's obvious that the production build mangles away too much of the web worker for it to work properly.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Open `dist/observable-webworker-problem/runtime-es2015.703a23e48ad83c851e49.js` after a production build and important things are missing, like `addEventListener` or even the string `Hello from observable webworker` that should be there.
+
+
